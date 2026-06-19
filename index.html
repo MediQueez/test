@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway A1+ Interactive End of Year Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .page-container {
+            max-width: 800px;
+            background: #fff;
+            margin: 0 auto 30px auto;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            position: relative;
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        .header-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .test-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .test-level {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .section-title {
+            background-color: #eef2f7;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 18px;
+            border-left: 5px solid #2b6cb0;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .exercise {
+            margin-bottom: 25px;
+        }
+        .exercise-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .points {
+            color: #2b6cb0;
+            font-weight: bold;
+        }
+        .q-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .q-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        input[type="text"] {
+            border: none;
+            border-bottom: 2px dashed #999;
+            padding: 2px 5px;
+            font-size: 15px;
+            color: #2b6cb0;
+            font-weight: bold;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-bottom-color: #2b6cb0;
+        }
+        .clickable-option {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 2px 8px;
+            margin: 0 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .clickable-option:hover {
+            background: #e2e8f0;
+        }
+        .clickable-option.selected {
+            background: #2b6cb0;
+            color: white;
+            border-color: #2b6cb0;
+        }
+        .mc-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .mc-block {
+            margin-bottom: 15px;
+        }
+        .footer-note {
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            font-size: 11px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+        .reading-box {
+            background: #fcfcfc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .text-gap-select {
+            padding: 2px 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        
+        /* Correction Engine Feedback Styles */
+        .correct-input {
+            background-color: #def7ec !important;
+            border-bottom: 2px solid #03543f !important;
+            color: #03543f !important;
+        }
+        .incorrect-input {
+            background-color: #fde8e8 !important;
+            border-bottom: 2px solid #9b1c1c !important;
+            color: #9b1c1c !important;
+        }
+        .correct-toggle {
+            background-color: #31c48d !important;
+            color: white !important;
+            border-color: #0e9f6e !important;
+        }
+        .incorrect-toggle {
+            background-color: #f98080 !important;
+            color: white !important;
+            border-color: #e53e3e !important;
+        }
+        .feedback-key {
+            font-size: 13px;
+            color: #03543f;
+            font-weight: bold;
+            margin-left: 5px;
+            display: none;
+        }
+        .submit-btn-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .submit-btn {
+            background-color: #0e9f6e;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: #0b845c;
+        }
+        .score-display-box {
+            display: none;
+            background: #2b6cb0;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(43, 108, 176, 0.3);
+        }
+        .criteria-box {
+            background: #f7fafc;
+            border: 1px solid #edf2f7;
+            padding: 10px;
+            font-size: 13px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .vocab-image-link {
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .vocab-image-link img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .audio-player {
+            margin: 15px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page-container">
+    <div class="test-title">End of Year Test</div>
+    <div class="test-level">STANDARD LEVEL &bull; A1+</div>
+
+    <table class="header-table">
+        <tr>
+            <td style="width: 50%;"><strong>NAME:</strong> <input type="text" style="width: 80%;"></td>
+            <td style="width: 50%;"><strong>CLASS:</strong> <input type="text" style="width: 80%;"></td>
+        </tr>
+    </table>
+
+    <div class="section-title">Grammar</div>
+
+    <!-- EXERCISE 1 -->
+    <div class="exercise" id="ex-1">
+        <div class="exercise-title">
+            <span>1 Choose the correct alternatives to complete the sentences.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">I think <div><span class="clickable-option" data-ans="that" onclick="toggleSelect(this)">that</span>/<span class="clickable-option" data-ans="this" onclick="toggleSelect(this)">this</span></div> is my mother's car over there.<span class="feedback-key"></span></li>
+            <li class="q-item">A: Have you got a pet? &nbsp; B: No, I <div><span class="clickable-option" data-ans="don't" onclick="toggleSelect(this)">don't</span>/<span class="clickable-option" data-ans="haven't" onclick="toggleSelect(this)">haven't</span></div>.<span class="feedback-key"></span></li>
+            <li class="q-item">Be <div><span class="clickable-option" data-ans="careful" onclick="toggleSelect(this)">careful</span>/<span class="clickable-option" data-ans="carefully" onclick="toggleSelect(this)">carefully</span></div> when you cross this road. There are lots of cars.<span class="feedback-key"></span></li>
+            <li class="q-item">Have you got <div><span class="clickable-option" data-ans="any" onclick="toggleSelect(this)">any</span>/<span class="clickable-option" data-ans="some" onclick="toggleSelect(this)">some</span></div> water? I'm thirsty.<span class="feedback-key"></span></li>
+            <li class="q-item">Please <div><span class="clickable-option" data-ans="stand up" onclick="toggleSelect(this)">stand up</span>/<span class="clickable-option" data-ans="don't stand up" onclick="toggleSelect(this)">don't stand up</span></div>. We've got another five minutes of the lesson!<span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 2 -->
+    <div class="exercise" id="ex-2">
+        <div class="exercise-title">
+            <span>2 Complete the sentences with the correct form of the verbs given.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">She plays the piano but <input type="text" style="width: 150px;" data-ans="doesn't sing,does not sing"> (sing).<span class="feedback-key"></span></li>
+            <li class="q-item"><input type="text" style="width: 60px;" data-ans="did"> you <input type="text" style="width: 100px;" data-ans="go"> (go) to that new sports shop last weekend?<span class="feedback-key"></span></li>
+            <li class="q-item">I can't stand <input type="text" style="width: 120px;" data-ans="getting up"> (get up) early.<span class="feedback-key"></span></li>
+            <li class="q-item">She <input type="text" style="width: 160px;" data-ans="is going to stay,'s going to stay,is staying,'s staying"> (stay) at Marta's house tomorrow evening.<span class="feedback-key"></span></li>
+            <li class="q-item">I <input type="text" style="width: 150px;" data-ans="have spoken"> never speak to her. Is she friendly? *(Type 'have spoken')<span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 3 -->
+    <div class="exercise" id="ex-3">
+        <div class="exercise-title">
+            <span>3 Put the words in the correct order to make sentences or questions.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item" style="flex-direction: column; align-items: flex-start;">
+                <span>1 stay / He / late / doesn't / out / usually / .</span>
+                <input type="text" style="width: 100%; margin-top: 5px;" data-ans="He doesn't usually stay out late.">
+                <span class="feedback-key"></span>
+            </li>
+            <li class="q-item" style="flex-direction: column; align-items: flex-start; margin-top: 10px;">
+                <span>2 you / seen / Have / ever / elephant / an / ?</span>
+                <input type="text" style="width: 100%; margin-top: 5px;" data-ans="Have you ever seen an elephant?">
+                <span class="feedback-key"></span>
+            </li>
+            <li class="q-item" style="flex-direction: column; align-items: flex-start; margin-top: 10px;">
+                <span>3 is / a / bag / There / in / my / pen / .</span>
+                <input type="text" style="width: 100%; margin-top: 5px;" data-ans="There is a pen in my bag.,There's a pen in my bag.">
+                <span class="feedback-key"></span>
+            </li>
+            <li class="q-item" style="flex-direction: column; align-items: flex-start; margin-top: 10px;">
+                <span>4 phone / expensive / That / mine / was / more / than / .</span>
+                <input type="text" style="width: 100%; margin-top: 5px;" data-ans="That phone was more expensive than mine.">
+                <span class="feedback-key"></span>
+            </li>
+            <li class="q-item" style="flex-direction: column; align-items: flex-start; margin-top: 10px;">
+                <span>5 to / have / help / You / don't / me / .</span>
+                <input type="text" style="width: 100%; margin-top: 5px;" data-ans="You don't have to help me.">
+                <span class="feedback-key"></span>
+            </li>
+        </ol>
+    </div>
+
+    <div class="footer-note">
+        <span>Gateway 2nd Edition &bull; Photocopiable © Macmillan Publishers Limited 2016</span>
+        <span>Page 1 of 5</span>
+    </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page-container">
+    <!-- EXERCISE 4 -->
+    <div class="exercise" id="ex-4">
+        <div class="exercise-title">
+            <span>4 Complete the sentences with the correct answer, A, B or C.</span>
+            <span class="points">/5</span>
+        </div>
+        <div class="mc-block">
+            <p>1 You <input type="text" style="width: 40px; text-align: center;" id="q4-1" data-ans="C" readonly> help each other in the exam. <span class="feedback-key"></span></p>
+            <div class="mc-options">
+                <span class="clickable-option" onclick="selectMC(this, 'q4-1', 'A')">A must</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-1', 'B')">B don't have to</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-1', 'C')">C mustn't</span>
+            </div>
+        </div>
+        <div class="mc-block">
+            <p>2 I usually go running <input type="text" style="width: 40px; text-align: center;" id="q4-2" data-ans="C" readonly> Sunday mornings. <span class="feedback-key"></span></p>
+            <div class="mc-options">
+                <span class="clickable-option" onclick="selectMC(this, 'q4-2', 'A')">A in</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-2', 'B')">B at</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-2', 'C')">C on</span>
+            </div>
+        </div>
+        <div class="mc-block">
+            <p>3 Usain Bolt is <input type="text" style="width: 40px; text-align: center;" id="q4-3" data-ans="C" readonly> runner in the world. <span class="feedback-key"></span></p>
+            <div class="mc-options">
+                <span class="clickable-option" onclick="selectMC(this, 'q4-3', 'A')">A the most fast</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-3', 'B')">B the more fast</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-3', 'C')">C the fastest</span>
+            </div>
+        </div>
+        <div class="mc-block">
+            <p>4 I think that's <input type="text" style="width: 40px; text-align: center;" id="q4-4" data-ans="B" readonly> house. The one with the blue door. <span class="feedback-key"></span></p>
+            <div class="mc-options">
+                <span class="clickable-option" onclick="selectMC(this, 'q4-4', 'A')">A they</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-4', 'B')">B their</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-4', 'C')">C theirs</span>
+            </div>
+        </div>
+        <div class="mc-block">
+            <p>5 That's <input type="text" style="width: 40px; text-align: center;" id="q4-5" data-ans="A" readonly> very nice picture you've painted. <span class="feedback-key"></span></p>
+            <div class="mc-options">
+                <span class="clickable-option" onclick="selectMC(this, 'q4-5', 'A')">A a</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-5', 'B')">B an</span>
+                <span class="clickable-option" onclick="selectMC(this, 'q4-5', 'C')">C any</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">Vocabulary</div>
+
+    <!-- EXERCISE 5 (Image link added here) -->
+    <div class="exercise" id="ex-5">
+        <div class="exercise-title">
+            <span>5 Look at the picture and write the correct words.</span>
+            <span class="points">/5</span>
+        </div>
+        <!-- Picture link added -->
+        <a href="https://ibb.co/203tCZ7p" class="vocab-image-link" target="_blank">
+            <img src="https://i.ibb.co/bj5BCbgG/photo-2026-06-19-04-52-18.jpg" alt="Vocabulary picture for exercise 5" border="0">
+        </a>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 <input type="text" style="width: 200px;" data-ans="whale"><span class="feedback-key"></span></li>
+            <li class="q-item">2 <input type="text" style="width: 200px;" data-ans="sweatshirt"><span class="feedback-key"></span></li>
+            <li class="q-item">3 <input type="text" style="width: 200px;" data-ans="radiator"><span class="feedback-key"></span></li>
+            <li class="q-item">4 <input type="text" style="width: 200px;" data-ans="keyboard"><span class="feedback-key"></span></li>
+            <li class="q-item">5 <input type="text" style="width: 200px;" data-ans="calculator"><span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 6 -->
+    <div class="exercise" id="ex-6">
+        <div class="exercise-title">
+            <span>6 Circle the odd one out.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 <span class="clickable-option" data-ans="chair" onclick="toggleSelect(this)">ruler</span> <span class="clickable-option" data-ans="chair" onclick="toggleSelect(this)">pencil</span> <span class="clickable-option" data-ans="chair" onclick="toggleSelect(this)">chair</span> <span class="clickable-option" data-ans="chair" onclick="toggleSelect(this)">rubber</span><span class="feedback-key"></span></li>
+            <li class="q-item">2 <span class="clickable-option" data-ans="player" onclick="toggleSelect(this)">husband</span> <span class="clickable-option" data-ans="player" onclick="toggleSelect(this)">niece</span> <span class="clickable-option" data-ans="player" onclick="toggleSelect(this)">player</span> <span class="clickable-option" data-ans="player" onclick="toggleSelect(this)">aunt</span><span class="feedback-key"></span></li>
+            <li class="q-item">3 <span class="clickable-option" data-ans="speaker" onclick="toggleSelect(this)">blog</span> <span class="clickable-option" data-ans="speaker" onclick="toggleSelect(this)">speaker</span> <span class="clickable-option" data-ans="speaker" onclick="toggleSelect(this)">password</span> <span class="clickable-option" data-ans="speaker" onclick="toggleSelect(this)">website</span><span class="feedback-key"></span></li>
+            <li class="q-item">4 <span class="clickable-option" data-ans="clever" onclick="toggleSelect(this)">badly-paid</span> <span class="clickable-option" data-ans="clever" onclick="toggleSelect(this)">unskilled</span> <span class="clickable-option" data-ans="clever" onclick="toggleSelect(this)">full-time</span> <span class="clickable-option" data-ans="clever" onclick="toggleSelect(this)">clever</span><span class="feedback-key"></span></li>
+            <li class="q-item">5 <span class="clickable-option" data-ans="sunny" onclick="toggleSelect(this)">stormy</span> <span class="clickable-option" data-ans="sunny" onclick="toggleSelect(this)">raining</span> <span class="clickable-option" data-ans="sunny" onclick="toggleSelect(this)">sunny</span> <span class="clickable-option" data-ans="sunny" onclick="toggleSelect(this)">cloudy</span><span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 7 -->
+    <div class="exercise" id="ex-7">
+        <div class="exercise-title">
+            <span>7 Read the definitions and write the correct words.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 You learn about countries, oceans and the world in this school subject: <input type="text" style="width: 200px;" data-ans="geography"><span class="feedback-key"></span></li>
+            <li class="q-item">2 You can get books for a short time in this place: <input type="text" style="width: 200px;" data-ans="library"><span class="feedback-key"></span></li>
+            <li class="q-item">3 You usually sleep in this room: <input type="text" style="width: 200px;" data-ans="bedroom"><span class="feedback-key"></span></li>
+            <li class="q-item">4 Boys wear these in the swimming pool: <input type="text" style="width: 200px;" data-ans="swimming trunks"><span class="feedback-key"></span></li>
+            <li class="q-item">5 This connects your head and your body: <input type="text" style="width: 200px;" data-ans="neck"><span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 8 -->
+    <div class="exercise" id="ex-8">
+        <div class="exercise-title">
+            <span>8 Choose the correct alternatives to complete the sentences.</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 It's quite <div><span class="clickable-option" data-ans="warm" onclick="toggleSelect(this)">windy</span>/<span class="clickable-option" data-ans="warm" onclick="toggleSelect(this)">warm</span></div> today so I'm not going to wear a jacket.<span class="feedback-key"></span></li>
+            <li class="q-item">2 You have to <div><span class="clickable-option" data-ans="log on" onclick="toggleSelect(this)">log on</span>/<span class="clickable-option" data-ans="log on" onclick="toggleSelect(this)">click on</span></div> before you can use the computer.<span class="feedback-key"></span></li>
+            <li class="q-item">3 A: What time is <div><span class="clickable-option" data-ans="dinner" onclick="toggleSelect(this)">lunch</span>/<span class="clickable-option" data-ans="dinner" onclick="toggleSelect(this)">dinner</span></div>? &nbsp; B: At seven o'clock.<span class="feedback-key"></span></li>
+            <li class="q-item">4 She's very <div><span class="clickable-option" data-ans="calm" onclick="toggleSelect(this)">calm</span>/<span class="clickable-option" data-ans="calm" onclick="toggleSelect(this)">kind</span></div>. She's always relaxed, even in difficult situations.<span class="feedback-key"></span></li>
+            <li class="q-item">5 That's the winner over there. He's wearing his <div><span class="clickable-option" data-ans="medal" onclick="toggleSelect(this)">medal</span>/<span class="clickable-option" data-ans="medal" onclick="toggleSelect(this)">cup</span></div>.<span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <div class="footer-note">
+        <span>Gateway 2nd Edition &bull; Photocopiable © Macmillan Publishers Limited 2016</span>
+        <span>Page 2 of 5</span>
+    </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page-container">
+    <div class="section-title">Use of English</div>
+
+    <!-- EXERCISE 9 -->
+    <div class="exercise" id="ex-9">
+        <div class="exercise-title">
+            <span>9 Choose the best answer (A, B or C) to complete the text.</span>
+            <span class="points">/8</span>
+        </div>
+        
+        <div class="reading-box">
+            I <span class="points">(1)</span> <select class="text-gap-select" data-ans="C"><option value=""></option><option>A</option><option>B</option><option>C</option></select> to go to Valencia <span class="points">(2)</span> <select class="text-gap-select" data-ans="B"><option value=""></option><option>A</option><option>B</option><option>C</option></select> the holidays with my mum and dad. My dad <span class="points">(3)</span> <select class="text-gap-select" data-ans="C"><option value=""></option><option>A</option><option>B</option><option>C</option></select> the city before and he says <span class="points">(4)</span> <select class="text-gap-select" data-ans="A"><option value=""></option><option>A</option><option>B</option><option>C</option></select> great. It's also got <span class="points">(5)</span> <select class="text-gap-select" data-ans="A"><option value=""></option><option>A</option><option>B</option><option>C</option></select> sea life park in Europe and <span class="points">(6)</span> <select class="text-gap-select" data-ans="B"><option value=""></option><option>A</option><option>B</option><option>C</option></select> animals from all of the <span class="points">(7)</span> <select class="text-gap-select" data-ans="C"><option value=""></option><option>A</option><option>B</option><option>C</option></select> in the world. It's really big so you <span class="points">(8)</span> <select class="text-gap-select" data-ans="C"><option value=""></option><option>A</option><option>B</option><option>C</option></select> spend the day there. We're going to get tickets on the Internet so we won't have any problems getting in.
+        </div>
+
+        <table style="width:100%; font-size:14px; border-spacing: 10px;">
+            <tr><td><strong>1</strong> A go</td><td>B going</td><td>C 'm going</td></tr>
+            <tr><td><strong>2</strong> A at</td><td>B in</td><td>C on</td></tr>
+            <tr><td><strong>3</strong> A visits</td><td>B is visiting</td><td>C has visited</td></tr>
+            <tr><td><strong>4</strong> A it's</td><td>B he's</td><td>C they're</td></tr>
+            <tr><td><strong>5</strong> A the biggest</td><td>B the bigger</td><td>C the most big</td></tr>
+            <tr><td><strong>6</strong> A there's</td><td>B there are</td><td>C are there</td></tr>
+            <tr><td><strong>7</strong> A lakes</td><td>B rivers</td><td>C oceans</td></tr>
+            <tr><td><strong>8</strong> A don't have to</td><td>B mustn't</td><td>C have to</td></tr>
+        </table>
+    </div>
+
+    <div class="section-title">Reading</div>
+
+    <!-- EXERCISE 10 -->
+    <div class="exercise" id="ex-10">
+        <div class="exercise-title">
+            <span>10 Read the article about a cycle trip. Choose from the headings A-E the one which fits each gap.</span>
+            <span class="points">/5</span>
+        </div>
+
+        <div style="margin-bottom:15px; font-weight:bold; color:#2b6cb0;">
+            A Seeing the world &nbsp;|&nbsp; B Cycling every day &nbsp;|&nbsp; C The best thing &nbsp;|&nbsp; D Coming home &nbsp;|&nbsp; E Problems on the road
+        </div>
+
+        <div class="reading-box">
+            <h3 style="text-align:center; margin-top:0;">An amazing adventure</h3>
+            
+            <p><strong>(1) Gap Heading:</strong> <select class="text-gap-select" data-ans="D"><option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select><br>
+            Eighteen year old Jerome Williams has become one of the youngest people to cycle around the world. After eight months and 19,000 miles, Jerome returned home yesterday.</p>
+            
+            <p><strong>(2) Gap Heading:</strong> <select class="text-gap-select" data-ans="B"><option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select><br>
+            Jerome started his journey late last year. In that time he has cycled more than 100 miles every day. He's ridden across deserts, over mountains and through rainforests and he's crossed four continents.</p>
+            
+            <p><strong>(3) Gap Heading:</strong> <select class="text-gap-select" data-ans="A"><option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select><br>
+            'I've done lots of cycling in my life but it's always been in the UK. I wanted to see more of the world. For me, the most interesting place was South America. There was lots to see and the people were really friendly.'</p>
+            
+            <p><strong>(4) Gap Heading:</strong> <select class="text-gap-select" data-ans="E"><option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select><br>
+            'One day my bicycle broke on a mountain road and I wasn't sure how to fix it. Suddenly some people appeared and took me back to their village. They let me stay in their house and a mechanic repaired my bike. They were really kind.'</p>
+            
+            <p><strong>(5) Gap Heading:</strong> <select class="text-gap-select" data-ans="C"><option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select><br>
+            'Before I went, I only wanted to see the well-known places, but the people were the most amazing thing about the trip. All over the world, they were pleased to see me and help me. It's given me a lot of confidence and now I want to do it again!'</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <span>Gateway 2nd Edition &bull; Photocopiable © Macmillan Publishers Limited 2016</span>
+        <span>Page 3 of 5</span>
+    </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page-container">
+    <!-- EXERCISE 11 -->
+    <div class="exercise" id="ex-11">
+        <div class="exercise-title">
+            <span>11 Are these statements True (T) or False (F)?</span>
+            <span class="points">/7</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 Jerome finished his adventure eight months ago. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">2 He rode his bike every day of the journey. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">3 It's the first time Jerome has cycled in another country. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">4 Jerome doesn't think the South Americans are friendly. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">5 Jerome knew how to fix his bike when it broke. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">6 Someone repaired his bike for him. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">7 Jerome thinks that there are friendly people everywhere. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <div class="section-title">Listening</div>
+
+    <!-- Audio player added here for Listening section -->
+    <audio controls class="audio-player">
+        <source src="https://d3o8hbmq1ueggw.cloudfront.net/6unxv%2Ffile%2Fc647da923f8ceed7bfd7ddc4421c656d_3b8a82c789c206dd3750806261edda3f.mp3?response-content-disposition=inline%3Bfilename%3D%22c647da923f8ceed7bfd7ddc4421c656d_3b8a82c789c206dd3750806261edda3f.mp3%22%3B&response-content-type=audio%2Fmpeg&Expires=1781904565&Signature=L9R8k7n247TAQo0m~BS4HrNMNlpE-kV4V88mEJK7bCR7~S8MJQmWa~-ibnX~0R3p4WN2kR3TeX-glocv7NxMhFAFjzU6maCEkOWp~wpPN4fLkieiFNyRATkCnk2eF4o1kkIdYog97HE1EqsnmjED2oxwEU~KQXjXKTEVD9yg9JxVoGyQUMe6PsMkr2BhKAtvh76-O1X-w9cMWqeN8Nj9b5eE3W5Lxc8lDyYMovPeUdJ1qDEDk4WA~o-g1uE6hBRxk-4c9pk5JW-bX3UyhJseWyrmDdH-8tQ3z45ObJXTCGWrUJVm~tZSu0omjjdLhMQLnMNnkOcAJn79jIzEERS-2w__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- EXERCISE 12 -->
+    <div class="exercise" id="ex-12">
+        <div class="exercise-title">
+            <span>12 Listen to a radio programme. Are these statements True (T) or False (F)?</span>
+            <span class="points">/5</span>
+        </div>
+        <ol class="q-list" style="list-style-type: decimal; padding-left: 20px;">
+            <li class="q-item">1 Danny was the winner of Something Special. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">2 He was on Something Special for one week. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">3 His uncle was also in the competition. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">4 Danny felt sad when he won. <div><span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="F" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+            <li class="q-item">5 Danny plans to spend some time with his family. <div><span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">T</span>/<span class="clickable-option" data-ans="T" onclick="toggleSelect(this)">F</span></div><span class="feedback-key"></span></li>
+        </ol>
+    </div>
+
+    <!-- EXERCISE 13 -->
+    <div class="exercise" id="ex-13">
+        <div class="exercise-title">
+            <span>13 Listen again and complete the summary with one or two words in each gap.</span>
+            <span class="points">/5</span>
+        </div>
+        <p>Something Special is a singing (1) <input type="text" style="width:140px;" data-ans="competition"><span class="feedback-key"></span> on TV. 
+        Danny's (2) <input type="text" style="width:120px;" data-ans="uncle"><span class="feedback-key"></span> wanted Danny to go on the programme. 
+        Danny thought it was difficult the first time he was on the programme but it became (3) <input type="text" style="width:120px;" data-ans="easier"><span class="feedback-key"></span>. 
+        Danny won the competition. His prize was (4) <input type="text" style="width:120px;" data-ans="money"><span class="feedback-key"></span> and a trip to the (5) <input type="text" style="width:180px;" data-ans="united states,us,the us,the united states"><span class="feedback-key"></span> to make a record. Now Danny wants to go on holiday with his family.</p>
+    </div>
+
+    <div class="footer-note">
+        <span>Gateway 2nd Edition &bull; Photocopiable © Macmillan Publishers Limited 2016</span>
+        <span>Page 4 of 5</span>
+    </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page-container">
+    <div class="section-title">The End</div>
+
+    
+
+    <!-- SUBMISSION ENGINE BUTTONS -->
+    <div class="submit-btn-container">
+        <button type="button" class="submit-btn" onclick="checkTestEngine()">Submit Test and See Score</button>
+    </div>
+
+    <div class="score-display-box" id="final-score-board">
+        TOTAL TEST SCORE: <span id="score-holder">0</span> / 90
+    </div>
+
+    <div class="footer-note">
+        <span>Gateway 2nd Edition &bull; Photocopiable © Macmillan Publishers Limited 2016</span>
+        <span>Page 5 of 5</span>
+        <span>By Dina Nurtazaevna</span>
+    </div>
+</div>
+
+<script>
+    // System to track basic toggle options
+    function toggleSelect(element) {
+        const parent = element.parentNode;
+        const options = parent.getElementsByClassName('clickable-option');
+        for (let opt of options) {
+            opt.classList.remove('selected');
+        }
+        element.classList.add('selected');
+    }
+
+    // Multiple choice mapping system
+    function selectMC(element, targetInputId, value) {
+        const parent = element.parentNode;
+        const options = parent.getElementsByClassName('clickable-option');
+        for (let opt of options) {
+            opt.classList.remove('selected');
+        }
+        element.classList.add('selected');
+        document.getElementById(targetInputId).value = value;
+    }
+
+    // MAIN CORRECTION ENGINE
+    function checkTestEngine() {
+        let calculatedScore = 0;
+
+        // --- 1. CHECK INPUT TEXT FIELDS (EX 2, 3, 5, 7, 13) ---
+        const textInputs = document.querySelectorAll('input[type="text"][data-ans]');
+        textInputs.forEach(input => {
+            let studentRes = input.value.trim().toLowerCase().replace(/[.'’]/g, "");
+            let acceptedAnswers = input.getAttribute('data-ans').toLowerCase().split(',');
+            
+            // Basic normalization check
+            let isCorrect = acceptedAnswers.some(ans => studentRes === ans.trim().replace(/[.'’]/g, ""));
+            
+            // Specific string check fallback for sentences (ex 3) to allow flexible spacing
+            if (!isCorrect) {
+                let compressedStudent = studentRes.replace(/\s+/g, "");
+                isCorrect = acceptedAnswers.some(ans => compressedStudent === ans.trim().toLowerCase().replace(/[.'’]/g, "").replace(/\s+/g, ""));
+            }
+
+            const feedbackSpan = input.parentNode.querySelector('.feedback-key');
+
+            if (isCorrect && studentRes !== "") {
+                calculatedScore += 1;
+                input.className = "correct-input";
+                if(feedbackSpan) feedbackSpan.style.display = "none";
+            } else {
+                input.className = "incorrect-input";
+                if(feedbackSpan) {
+                    feedbackSpan.innerText = ` (Key: ${acceptedAnswers[0]})`;
+                    feedbackSpan.style.display = "inline";
+                }
+            }
+        });
+
+        // --- 2. CHECK MULTIPLE CHOICE CHOSEN VALUES (EX 4) ---
+        const mcInputs = document.querySelectorAll('#ex-4 input[readonly]');
+        mcInputs.forEach(input => {
+            let studentRes = input.value.trim();
+            let correctAns = input.getAttribute('data-ans');
+            const block = input.parentNode;
+            const feedbackSpan = block.querySelector('.feedback-key');
+
+            if (studentRes === correctAns) {
+                calculatedScore += 1;
+                input.className = "correct-input";
+                if(feedbackSpan) feedbackSpan.style.display = "none";
+            } else {
+                input.className = "incorrect-input";
+                if(feedbackSpan) {
+                    feedbackSpan.innerText = ` (Key: ${correctAns})`;
+                    feedbackSpan.style.display = "inline";
+                }
+            }
+        });
+
+        // --- 3. CHECK TOGGLE ELEMENTS (EX 1, 6, 8, 11, 12) ---
+        // Processes individual blocks containing .clickable-option pairs
+        const parentItems = document.querySelectorAll('#ex-1 .q-item, #ex-6 .q-item, #ex-8 .q-item, #ex-11 .q-item, #ex-12 .q-item');
+        parentItems.forEach(item => {
+            const activeSelection = item.querySelector('.clickable-option.selected');
+            const feedbackSpan = item.querySelector('.feedback-key');
+            let correctAnswerKey = "";
+            
+            // Identify target key from any child option
+            const sampleOpt = item.querySelector('.clickable-option');
+            if (sampleOpt) correctAnswerKey = sampleOpt.getAttribute('data-ans');
+
+            if (activeSelection) {
+                let chosenText = activeSelection.innerText.trim().toLowerCase();
+                let targetText = correctAnswerKey.toLowerCase();
+
+                if (chosenText === targetText) {
+                    calculatedScore += 1;
+                    activeSelection.className = "clickable-option selected correct-toggle";
+                    if(feedbackSpan) feedbackSpan.style.display = "none";
+                } else {
+                    activeSelection.className = "clickable-option selected incorrect-toggle";
+                    if(feedbackSpan) {
+                        feedbackSpan.innerText = ` (Key: ${correctAnswerKey})`;
+                        feedbackSpan.style.display = "inline";
+                    }
+                }
+            } else {
+                // Not answered
+                if(feedbackSpan) {
+                    feedbackSpan.innerText = ` (Key: ${correctAnswerKey})`;
+                    feedbackSpan.style.display = "inline";
+                }
+            }
+        });
+
+        // --- 4. CHECK USE OF ENGLISH & READING SELECT DROP-DOWNS (EX 9, 10) ---
+        const dropdowns = document.querySelectorAll('.text-gap-select');
+        dropdowns.forEach(select => {
+            let studentChoice = select.value;
+            let correctChoice = select.getAttribute('data-ans');
+
+            if (studentChoice === correctChoice) {
+                calculatedScore += 1;
+                select.style.backgroundColor = "#def7ec";
+                select.style.color = "#03543f";
+                select.style.borderColor = "#0e9f6e";
+            } else {
+                select.style.backgroundColor = "#fde8e8";
+                select.style.color = "#9b1c1c";
+                select.style.borderColor = "#e53e3e";
+            }
+        });
+
+        // --- 5. ADD MANUAL CRITERIA VALUES (EX 14 & 15) ---
+        let writingVal = parseInt(document.getElementById('writing-score').value) || 0;
+        let speakingVal = parseInt(document.getElementById('speaking-score').value) || 0;
+        calculatedScore += writingVal;
+        calculatedScore += speakingVal;
+
+        // --- 6. DISPLAY ENGINE SUMMARY RESULTS ---
+        document.getElementById('score-holder').innerText = calculatedScore;
+        const finalBoard = document.getElementById('final-score-board');
+        finalBoard.style.display = "block";
+        
+        // Scroll student down view window cleanly to showcase score box
+        finalBoard.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
