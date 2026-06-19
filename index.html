@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.N. Tests - English Placement</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 0;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .header-strip {
+            background: #ffd700;
+            padding: 5px 0;
+            background: repeating-linear-gradient(
+                45deg,
+                #ffd700,
+                #ffd700 10px,
+                #ffec80 10px,
+                #ffec80 20px
+            );
+        }
+
+        .main-header {
+            background: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 4px solid #ffd700;
+            position: relative;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .main-header h1 {
+            margin: 0;
+            color: #2d5aa0;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        .main-header h1 span {
+            color: #e85d3a;
+        }
+
+        .main-header .tagline {
+            margin: 5px 0 0 0;
+            color: #777;
+            font-size: 15px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            border: 3px solid #b8d4f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .welcome-card h2 {
+            color: #2d5aa0;
+            margin-top: 0;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .test-card:hover {
+            border-color: #ffd700;
+            border-width: 3px;
+            padding: 19px;
+        }
+
+        .test-card.available {
+            border-left: 6px solid #4caf50;
+        }
+
+        .test-card.coming-soon {
+            border-left: 6px solid #ff9800;
+            opacity: 0.8;
+        }
+
+        .level-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .level-a1 { background: #66bb6a; }
+        .level-a2 { background: #42a5f5; }
+        .level-b1 { background: #ffa726; }
+        .level-b2 { background: #ab47bc; }
+        .level-c1 { background: #ef5350; }
+
+        .test-info {
+            flex: 1;
+        }
+
+        .test-info h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .test-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .test-info .topics {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .btn-go {
+            display: inline-block;
+            padding: 10px 25px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 25px;
+            white-space: nowrap;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(76,175,80,0.3);
+        }
+
+        .btn-go:hover {
+            background: #388e3c;
+        }
+
+        .btn-wait {
+            display: inline-block;
+            padding: 10px 25px;
+            background: #e0e0e0;
+            color: #999;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 25px;
+            white-space: nowrap;
+        }
+
+        .cefr-box {
+            background: white;
+            border: 3px solid #b8d4f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .cefr-box h2 {
+            color: #2d5aa0;
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .level-guide {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .guide-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .guide-item strong {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .guide-item small {
+            font-size: 11px;
+        }
+
+        .guide-a1 { background: #66bb6a; }
+        .guide-a2 { background: #42a5f5; }
+        .guide-b1 { background: #ffa726; }
+        .guide-b2 { background: #ab47bc; }
+        .guide-c1 { background: #ef5350; }
+
+        .tips-box {
+            background: #fff9e6;
+            border: 2px dashed #ffd700;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .tips-box h3 {
+            color: #e85d3a;
+            margin-top: 0;
+        }
+
+        .tips-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tips-box li {
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            background: white;
+            border-top: 4px solid #ffd700;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .footer .stars {
+            color: #ffd700;
+            font-size: 20px;
+            letter-spacing: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .test-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .level-circle {
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-strip"></div>
+
+    <div class="main-header">
+        <div class="logo-area">
+            <!-- Simple book SVG icon -->
+            <svg class="logo-icon" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="8" width="18" height="34" rx="2" fill="#2d5aa0" />
+                <rect x="27" y="8" width="18" height="34" rx="2" fill="#e85d3a" />
+                <rect x="7" y="12" width="14" height="3" rx="1" fill="white" opacity="0.8" />
+                <rect x="7" y="18" width="14" height="3" rx="1" fill="white" opacity="0.8" />
+                <rect x="7" y="24" width="10" height="3" rx="1" fill="white" opacity="0.6" />
+                <rect x="29" y="12" width="14" height="3" rx="1" fill="white" opacity="0.8" />
+                <rect x="29" y="18" width="14" height="3" rx="1" fill="white" opacity="0.8" />
+                <rect x="29" y="24" width="8" height="3" rx="1" fill="white" opacity="0.6" />
+                <line x1="23" y1="10" x2="23" y2="40" stroke="#ffd700" stroke-width="3" stroke-linecap="round" />
+            </svg>
+            <h1>D.N. <span>Tests</span></h1>
+        </div>
+        <p class="tagline">English practice for everyone — pick your level and give it a go!</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>
+                <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="14" cy="10" r="6" fill="#ffd700" stroke="#e85d3a" stroke-width="2" />
+                    <path d="M6 24 Q6 16 14 16 Q22 16 22 24" fill="#ffd700" stroke="#e85d3a" stroke-width="2" />
+                    <circle cx="10" cy="9" r="1" fill="#333" />
+                    <circle cx="18" cy="9" r="1" fill="#333" />
+                    <path d="M11 13 Q14 15 17 13" fill="none" stroke="#e85d3a" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                Hello!
+            </h2>
+            <p style="font-size: 15px; color: #555;">
+                Welcome to D.N. Tests! Here you'll find English tests for different levels. 
+                Each test checks your grammar, words you know, reading, listening, writing, and speaking. 
+                The computer marks most of it straight away. For writing and speaking, your teacher will help.
+            </p>
+            <p style="font-size: 14px; color: #777;">
+                <strong>Don't know which test to pick?</strong> Start with A1 — it's the easiest. 
+                If it feels too simple, try A2 next time.
+            </p>
+        </div>
+
+        <!-- Test List -->
+        <div class="test-card available">
+            <div class="level-circle level-a1">A1</div>
+            <div class="test-info">
+                <h3>Beginner</h3>
+                <p>I can say hello, talk about my family, and ask simple questions.</p>
+                <div class="topics">Topics: to be, have got, present simple, there is/are, basic words</div>
+            </div>
+            <a href="A1-test.html" class="btn-go">Start A1 Test</a>
+        </div>
+
+        <div class="test-card coming-soon">
+            <div class="level-circle level-a2">A2</div>
+            <div class="test-info">
+                <h3>Elementary</h3>
+                <p>I can talk about things I did, compare things, and say how I feel.</p>
+                <div class="topics">Topics: past simple, comparatives, going to, daily life words</div>
+            </div>
+            <span class="btn-wait">Coming soon</span>
+        </div>
+
+        <div class="test-card coming-soon">
+            <div class="level-circle level-b1">B1</div>
+            <div class="test-info">
+                <h3>Intermediate</h3>
+                <p>I can give my opinion, tell stories, and talk about experiences.</p>
+                <div class="topics">Topics: present perfect, conditionals, modals, travel words</div>
+            </div>
+            <span class="btn-wait">Coming soon</span>
+        </div>
+
+        <div class="test-card coming-soon">
+            <div class="level-circle level-b2">B2</div>
+            <div class="test-info">
+                <h3>Upper Intermediate</h3>
+                <p>I can explain ideas clearly and talk about quite difficult topics.</p>
+                <div class="topics">Topics: passive, reported speech, phrasal verbs, work words</div>
+            </div>
+            <span class="btn-wait">Coming soon</span>
+        </div>
+
+        <div class="test-card coming-soon">
+            <div class="level-circle level-c1">C1</div>
+            <div class="test-info">
+                <h3>Advanced</h3>
+                <p>I can use English in most situations and talk about serious topics.</p>
+                <div class="topics">Topics: complex grammar, academic words, idioms, formal writing</div>
+            </div>
+            <span class="btn-wait">Coming soon</span>
+        </div>
+
+        <!-- Level Guide -->
+        <div class="cefr-box">
+            <h2>What do the levels mean?</h2>
+            <p style="color: #666; font-size: 14px;">These letters and numbers might look funny, but they're just a way to say how much English you know:</p>
+            
+            <div class="level-guide">
+                <div class="guide-item guide-a1">
+                    <strong>A1</strong>
+                    <small>I'm starting out</small>
+                </div>
+                <div class="guide-item guide-a2">
+                    <strong>A2</strong>
+                    <small>I know some English</small>
+                </div>
+                <div class="guide-item guide-b1">
+                    <strong>B1</strong>
+                    <small>I can chat OK</small>
+                </div>
+                <div class="guide-item guide-b2">
+                    <strong>B2</strong>
+                    <small>I speak quite well</small>
+                </div>
+                <div class="guide-item guide-c1">
+                    <strong>C1</strong>
+                    <small>I'm really good</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="tips-box">
+            <h3>
+                <svg width="22" height="22" viewBox="0 0 22 22" style="vertical-align: middle; margin-right: 5px;" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="10" fill="#ffd700" stroke="#e85d3a" stroke-width="1.5" />
+                    <text x="11" y="16" text-anchor="middle" font-size="14" fill="#333">?</text>
+                </svg>
+                Tips for taking the test
+            </h3>
+            <ul>
+                <li>Read each question slowly — there's no timer</li>
+                <li>For the listening parts, you can play the audio more than once</li>
+                <li>Check your spelling — the computer looks for exact words</li>
+                <li>If you don't know an answer, have a guess — it's good practice</li>
+                <li>Ask your teacher if you get stuck</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div class="stars">★ ★ ★</div>
+        <p>D.N. Tests</p>
+        <p>Made by Dina Nurtazaevna for her students</p>
+        <p style="font-size: 11px; margin-top: 8px;">Photocopiable materials used with permission. For classroom use.</p>
+    </div>
+
+</body>
+</html>
