@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway A1+ Interactive Board Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --board-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --neon-glow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; user-select: none; }
+
+        body {
+            background-color: var(--bg-color); color: var(--text-main);
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        /* 16:9 Aspect Ratio Container */
+        .game-wrapper {
+            position: relative; width: 95vw; max-width: 1600px; aspect-ratio: 16 / 9;
+            background: var(--board-bg); border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* SCREENS & MODALS */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; transition: opacity 0.3s ease;
+        }
+        .screen.hidden { opacity: 0; pointer-events: none; }
+
+        .modal-box {
+            background: #1e293b; padding: 30px; border-radius: 16px;
+            border: 2px solid #334155; text-align: center; min-width: 400px;
+            max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--neon-glow); position: relative;
+        }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 20px;
+            background: none; border: none; color: #94a3b8;
+            font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s;
+        }
+        .close-btn:hover { color: #ef4444; }
+
+        h1, h2 { color: #fff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* INPUTS & BUTTONS */
+        .player-row { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; align-items: center; }
+        
+        input[type="text"] {
+            padding: 10px; border-radius: 8px; border: 1px solid #475569;
+            background: #0f172a; color: white; font-size: 16px; outline: none; width: 200px;
+        }
+        input[type="color"] {
+            border: none; width: 42px; height: 42px; border-radius: 8px;
+            cursor: pointer; background: none;
+        }
+
+        .btn {
+            background: var(--accent); color: white; border: none; padding: 12px 24px;
+            font-size: 16px; font-weight: 900; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; text-transform: uppercase;
+        }
+        .btn:hover { background: #2563eb; transform: scale(1.05); }
+        .btn-small { padding: 8px 16px; font-size: 14px; }
+        .btn-danger { background: #ef4444; } .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #10b981; } .btn-success:hover { background: #059669; }
+
+        #player-list { margin-top: 20px; text-align: left; }
+        
+        /* MAIN GAME UI */
+        .top-bar {
+            padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid #334155;
+        }
+        .turn-indicator { font-size: 24px; font-weight: 900; display: flex; align-items: center; gap: 15px; }
+        .current-color-glow { width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+        
+        .controls-group { display: flex; gap: 10px; }
+
+        /* BOARD */
+        .board-area { flex: 1; position: relative; padding: 2%; }
+        .cell {
+            position: absolute; width: 10%; height: 18%; border-radius: 16px;
+            background: #334155; border: 2px solid #475569;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; font-weight: 700; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translate(-50%, -50%);
+        }
+        .cell.start-cell { background: #166534; border-color: #22c55e; }
+        .cell.finish-cell { background: #701a75; border-color: #d946ef; }
+        .cell.lucky-cell { background: #854d0e; border-color: #eab308; }
+        .cell:hover { transform: translate(-50%, -55%) scale(1.05); cursor: pointer; border-color: #fff; }
+        .cell-id { font-size: 22px; color: rgba(255,255,255,0.8); }
+        .cell-unit { font-size: 10px; color: var(--accent); text-transform: uppercase; margin-top: 4px; }
+
+        /* TOKENS */
+        .token {
+            position: absolute; width: 32px; height: 32px; border-radius: 50%;
+            border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: all 0.5s ease-in-out; z-index: 50; transform: translate(-50%, -50%);
+        }
+
+        /* OVERLAYS */
+        .dice-container {
+            font-size: 80px; background: #0f172a; width: 150px; height: 150px;
+            display: flex; align-items: center; justify-content: center; border-radius: 20px;
+            margin: 20px auto; border: 4px solid var(--accent); box-shadow: var(--neon-glow);
+        }
+        .task-content {
+            font-size: 22px; line-height: 1.5; margin: 25px 0; padding: 20px;
+            background: rgba(0,0,0,0.3); border-radius: 12px; color: #e2e8f0;
+        }
+        .task-content b, .task-content strong { color: #fcd34d; }
+
+        /* MANAGE PLAYERS UI */
+        .edit-player-row {
+            display: flex; gap: 10px; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 8px;
+        }
+        .divider { height: 1px; background: #475569; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div id="setup-screen" class="screen">
+            <div class="modal-box">
+                <h1>Game Setup</h1>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Add your students and pick colors!</p>
+                <div class="player-row">
+                    <input type="text" id="p-name" placeholder="Student Name" maxlength="12">
+                    <input type="color" id="p-color" value="#ec4899">
+                    <button class="btn btn-success" onclick="addPlayerFromSetup()">Add</button>
+                </div>
+                <div id="setup-player-list" style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;"></div>
+                <button class="btn" style="width: 100%;" onclick="startGame()">Start Journey</button>
+            </div>
+        </div>
+
+        <div id="manage-screen" class="screen hidden">
+            <div class="modal-box" style="min-width: 500px;">
+                <button class="close-btn" onclick="closeManageScreen()">×</button>
+                <h2>Manage Players</h2>
+                <div id="manage-player-list">
+                    </div>
+                <div class="divider"></div>
+                <h3 style="color:#94a3b8; margin-bottom: 10px; font-size:16px;">Add New Player</h3>
+                <div class="player-row">
+                    <input type="text" id="new-p-name" placeholder="New Name" maxlength="12">
+                    <input type="color" id="new-p-color" value="#10b981">
+                    <button class="btn btn-success btn-small" onclick="addNewPlayerMidGame()">Add</button>
+                </div>
+                <button class="btn" style="width: 100%; margin-top:15px;" onclick="closeManageScreen()">Save & Close</button>
+            </div>
+        </div>
+
+        <div id="restart-screen" class="screen hidden">
+            <div class="modal-box">
+                <button class="close-btn" onclick="closeRestartScreen()">×</button>
+                <h2>Restart Game</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">How would you like to restart?</p>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-success" onclick="restartGame(true)">Keep Current Players</button>
+                    <button class="btn btn-danger" onclick="restartGame(false)">Clear Players & Start Fresh</button>
+                    <button class="btn" style="background: #475569;" onclick="closeRestartScreen()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="turn-screen" class="screen hidden">
+            <div class="modal-box">
+                <button class="close-btn" onclick="closeDiceScreen()">×</button>
+                <h2 id="turn-title">Turn</h2>
+                <div class="dice-container" id="dice-display">🎲</div>
+                <button class="btn" id="roll-btn" onclick="rollDice()">ROLL DICE</button>
+            </div>
+        </div>
+
+        <div id="task-screen" class="screen hidden">
+            <div class="modal-box" style="max-width: 600px;">
+                <h2 id="task-unit" style="color: var(--accent);">Unit 1</h2>
+                <div class="task-content" id="task-text">Task</div>
+                <button class="btn" onclick="endTurn()">Done / Next Player</button>
+            </div>
+        </div>
+
+        <div class="top-bar">
+            <div class="turn-indicator" id="top-turn-indicator">
+                <div class="current-color-glow" id="current-glow"></div>
+                <span id="current-name">Setup...</span>
+            </div>
+            <div class="controls-group">
+                <button class="btn btn-small" onclick="showTurnScreen()">🎲 Show Dice</button>
+                <button class="btn btn-small" style="background:#475569;" onclick="openManageScreen()">⚙️ Players</button>
+                <button class="btn btn-small btn-danger" onclick="openRestartScreen()">🔄 Restart</button>
+            </div>
+        </div>
+
+        <div class="board-area" id="board">
+            </div>
+    </div>
+
+    <script>
+        // AUDIO (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration, vol=0.1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        const soundEffects = {
+            pop: () => playTone(500, 'sine', 0.1, 0.2),
+            turn: () => { playTone(440, 'square', 0.1); setTimeout(()=>playTone(660, 'square', 0.2), 100); },
+            task: () => playTone(880, 'triangle', 0.3),
+            win: () => { [300,400,500,600,800].forEach((f,i) => setTimeout(()=>playTone(f,'sine',0.2), i*100)); }
+        };
+
+        // GAME DATA (Gateway A1+)
+        const gameData = [
+            { id: 1, unit: 'START', task: 'Welcome! Roll the dice to begin.' },
+            { id: 2, unit: 'Unit 1', task: 'What’s your name, how old are you and when is your birthday?' },
+            { id: 3, unit: 'Unit 1', task: 'Have you got any brothers or sisters? What\'s his/her hobby?' },
+            { id: 4, unit: 'Unit 2', task: 'What time do you normally get up? What do you do next?' },
+            { id: 5, unit: 'Unit 2', task: 'How often does your mom go to a sports centre or the gym?' },
+            { id: 6, unit: 'Unit 3', task: 'Do you live in a house or a flat? How many rooms are there?' },
+            { id: 7, unit: 'Unit 3', task: 'Fix the mistake: <br><strong>"There are a computer in my bedroom."</strong>' },
+            { id: 8, unit: 'Unit 3', task: 'Choose: <br><strong>"There aren\'t some / any biscuits."</strong>' },
+            { id: 9, unit: 'Unit 4', task: 'What is your favourite food and drink? How often do you have it?' },
+            { id: 10, unit: 'Unit 4', task: 'Make adverbs: <br><strong>drive (slow)</strong>, <strong>run (fast)</strong>.' },
+            { id: 11, unit: 'Unit 5', task: 'What’s your favourite gadget? When and why do you use it?' },
+            { id: 12, unit: 'Unit 5', task: 'Complete: <br><strong>"I can\'t stand ________ (wait) for the bus."</strong>' },
+            { id: 13, unit: 'Unit 5', task: 'Describe what Elias and Aida are doing in the picture right now!' },
+            { id: 14, unit: 'LUCKY', task: '💥 <strong>LUCKY BREAK!</strong> <br>Tell one random fun fact about yourself.' },
+            { id: 15, unit: 'Unit 6', task: 'Can you play rugby very well? What can you win in a competition?' },
+            { id: 16, unit: 'Unit 6', task: 'Do you go cycling on Sundays? What do you normally do?' },
+            { id: 17, unit: 'Unit 7', task: 'Where were you last weekend? Were you at home?' },
+            { id: 18, unit: 'Unit 7', task: 'Fix the mistake: <br><strong>"There was about thirty people at the party."</strong>' },
+            { id: 19, unit: 'Unit 7', task: 'Tell us 2 things you did last weekend (use regular verbs).' },
+            { id: 20, unit: 'Unit 8', task: 'Who did you see/meet last weekend? What did you buy?' },
+            { id: 21, unit: 'Unit 8', task: 'Order: <br><strong>"did / Where / go / last / they / weekend / ?"</strong>' },
+            { id: 22, unit: 'Unit 8', task: 'What is your dad\'s job? What kind of person is he?' },
+            { id: 23, unit: 'Unit 8', task: 'Tell me about your best friend. Is he/she cheerful? Kind?' },
+            { id: 24, unit: 'Unit 9', task: 'Ask a classmate: <br><strong>"Have you ever...?"</strong>' },
+            { id: 25, unit: 'Unit 9', task: 'Complete: <br><strong>"A mouse is ________ (small) than an elephant."</strong>' },
+            { id: 26, unit: 'Unit 9', task: 'Complete: <br><strong>"I think Messi is the ________ (good) footballer."</strong>' },
+            { id: 27, unit: 'Unit 9', task: 'What are you <strong>going to do</strong> this summer holidays?' },
+            { id: 28, unit: 'FINISH', task: '🎓 <strong>EXAM READY!</strong> <br>Congratulations!' }
+        ];
+
+        let players = [];
+        let currentPlayerIndex = 0;
+        let gameActive = false;
+        let nextPlayerId = 0;
+
+        const boardEl = document.getElementById('board');
+        
+        // --- INITIAL SETUP ---
+        function addPlayerFromSetup() {
+            const nameInput = document.getElementById('p-name');
+            const colorInput = document.getElementById('p-color');
+            if(!nameInput.value.trim()) return;
+            
+            players.push({ id: nextPlayerId++, name: nameInput.value, color: colorInput.value, position: 1, element: null });
+            updateSetupPlayerList();
+            nameInput.value = '';
+        }
+
+        function updateSetupPlayerList() {
+            const list = document.getElementById('setup-player-list');
+            list.innerHTML = players.map(p => 
+                `<div style="background:#334155; padding:5px 12px; border-radius:20px; font-weight:700;">
+                    <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${p.color}; margin-right:5px;"></span>${p.name}
+                </div>`
+            ).join('');
+        }
+
+        function startGame() {
+            if(players.length === 0) return alert("Add at least 1 student!");
+            document.getElementById('setup-screen').classList.add('hidden');
+            if(!gameActive) buildBoard();
+            createTokens();
+            updateTopBar();
+            gameActive = true;
+            soundEffects.turn();
+            setTimeout(showTurnScreen, 800);
+        }
+
+        // --- BOARD LOGIC ---
+        function buildBoard() {
+            boardEl.innerHTML = '';
+            const rows = 4, cols = 7;
+            for(let i = 0; i < 28; i++) {
+                const cell = gameData[i];
+                const div = document.createElement('div');
+                div.className = `cell ${i===0?'start-cell':''} ${i===27?'finish-cell':''} ${i===13?'lucky-cell':''}`;
+                div.innerHTML = `<div class="cell-id">${cell.id}</div><div class="cell-unit">${cell.unit}</div>`;
+                
+                const row = Math.floor(i / cols);
+                let col = i % cols;
+                if (row % 2 !== 0) col = (cols - 1) - col; // Snake pattern
+                
+                const xPct = 10 + (col * (80 / (cols - 1)));
+                const yPct = 15 + (row * (70 / (rows - 1)));
+                div.style.left = `${xPct}%`; div.style.top = `${yPct}%`;
+                div.onclick = () => showTaskManually(cell.id);
+                boardEl.appendChild(div);
+                cell.x = xPct; cell.y = yPct;
+            }
+        }
+
+        function createTokens() {
+            players.forEach((p, index) => {
+                if(!p.element) {
+                    const t = document.createElement('div');
+                    t.className = 'token';
+                    t.style.backgroundColor = p.color;
+                    t.dataset.offsetX = (index * 8) - 12;
+                    t.dataset.offsetY = (index * 8) - 12;
+                    boardEl.appendChild(t);
+                    p.element = t;
+                }
+                updateTokenPosition(p);
+            });
+        }
+
+        function updateTokenPosition(player) {
+            const cell = gameData[player.position - 1];
+            player.element.style.left = `calc(${cell.x}% + ${player.element.dataset.offsetX}px)`;
+            player.element.style.top = `calc(${cell.y}% + ${player.element.dataset.offsetY}px)`;
+        }
+
+        // --- TURN & DICE LOGIC ---
+        function updateTopBar() {
+            if(players.length === 0) return;
+            const p = players[currentPlayerIndex];
+            document.getElementById('current-name').innerText = `${p.name}'s Turn`;
+            document.getElementById('current-glow').style.backgroundColor = p.color;
+            document.getElementById('current-glow').style.color = p.color;
+        }
+
+        function showTurnScreen() {
+            if(players.length === 0) return;
+            const p = players[currentPlayerIndex];
+            document.getElementById('turn-title').innerText = `${p.name}'s Turn`;
+            document.getElementById('turn-title').style.color = p.color;
+            document.getElementById('dice-display').innerText = '🎲';
+            document.getElementById('turn-screen').classList.remove('hidden');
+        }
+
+        function closeDiceScreen() {
+            document.getElementById('turn-screen').classList.add('hidden');
+        }
+
+        function rollDice() {
+            const btn = document.getElementById('roll-btn');
+            btn.disabled = true;
+            const diceEl = document.getElementById('dice-display');
+            let count = 0; audioCtx.resume();
+            
+            const interval = setInterval(() => {
+                diceEl.innerText = Math.floor(Math.random() * 6) + 1;
+                soundEffects.pop();
+                count++;
+                if (count > 10) {
+                    clearInterval(interval);
+                    const finalRoll = Math.floor(Math.random() * 6) + 1;
+                    diceEl.innerText = finalRoll;
+                    setTimeout(() => movePlayer(finalRoll), 1000);
+                    btn.disabled = false;
+                }
+            }, 80);
+        }
+
+        function movePlayer(steps) {
+            closeDiceScreen();
+            const p = players[currentPlayerIndex];
+            const targetPos = Math.min(28, p.position + steps);
+            
+            const moveInterval = setInterval(() => {
+                if(p.position < targetPos) {
+                    p.position++;
+                    updateTokenPosition(p);
+                    soundEffects.pop();
+                } else {
+                    clearInterval(moveInterval);
+                    setTimeout(() => showTaskScreen(targetPos), 500);
+                }
+            }, 400);
+        }
+
+        function showTaskScreen(cellId) {
+            soundEffects.task();
+            const cell = gameData[cellId - 1];
+            document.getElementById('task-unit').innerText = `${cell.unit} - Space ${cell.id}`;
+            document.getElementById('task-text').innerHTML = cell.task;
+            document.getElementById('task-screen').classList.remove('hidden');
+            if(cellId === 28) soundEffects.win();
+        }
+
+        function showTaskManually(cellId) {
+            const cell = gameData[cellId - 1];
+            document.getElementById('task-unit').innerText = `${cell.unit} - Space ${cell.id} (Manual View)`;
+            document.getElementById('task-text').innerHTML = cell.task;
+            document.getElementById('task-screen').classList.remove('hidden');
+        }
+
+        function endTurn() {
+            document.getElementById('task-screen').classList.add('hidden');
+            if(players.length > 0) {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            }
+            updateTopBar();
+            soundEffects.turn();
+            setTimeout(showTurnScreen, 800);
+        }
+
+        // --- MANAGE PLAYERS MID-GAME ---
+        function openManageScreen() {
+            renderManageList();
+            document.getElementById('manage-screen').classList.remove('hidden');
+        }
+
+        function closeManageScreen() {
+            document.getElementById('manage-screen').classList.add('hidden');
+            updateTopBar(); // In case current player was edited
+        }
+
+        function renderManageList() {
+            const list = document.getElementById('manage-player-list');
+            list.innerHTML = players.map((p, i) => `
+                <div class="edit-player-row">
+                    <input type="text" value="${p.name}" onchange="updatePlayerProp(${p.id}, 'name', this.value)" style="width:150px;">
+                    <input type="color" value="${p.color}" onchange="updatePlayerProp(${p.id}, 'color', this.value)">
+                    <button class="btn btn-danger btn-small" onclick="removePlayer(${p.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function updatePlayerProp(id, prop, value) {
+            const p = players.find(player => player.id === id);
+            if(p) {
+                p[prop] = value;
+                if(prop === 'color' && p.element) p.element.style.backgroundColor = value;
+            }
+        }
+
+        function removePlayer(id) {
+            const pIndex = players.findIndex(player => player.id === id);
+            if(pIndex > -1) {
+                const p = players[pIndex];
+                if(p.element) p.element.remove();
+                players.splice(pIndex, 1);
+                if(currentPlayerIndex >= players.length) currentPlayerIndex = 0;
+                renderManageList();
+            }
+        }
+
+        function addNewPlayerMidGame() {
+            const nameInput = document.getElementById('new-p-name');
+            const colorInput = document.getElementById('new-p-color');
+            if(!nameInput.value.trim()) return;
+            
+            const newP = { id: nextPlayerId++, name: nameInput.value, color: colorInput.value, position: 1, element: null };
+            players.push(newP);
+            createTokens(); // Will create element only for the new one because others already have element
+            renderManageList();
+            nameInput.value = '';
+        }
+
+        // --- RESTART LOGIC ---
+        function openRestartScreen() {
+            document.getElementById('restart-screen').classList.remove('hidden');
+        }
+
+        function closeRestartScreen() {
+            document.getElementById('restart-screen').classList.add('hidden');
+        }
+
+        function restartGame(keepPlayers) {
+            closeRestartScreen();
+            closeDiceScreen();
+            document.getElementById('task-screen').classList.add('hidden');
+            
+            if(keepPlayers) {
+                // Reset positions to 1
+                players.forEach(p => { p.position = 1; updateTokenPosition(p); });
+                currentPlayerIndex = 0;
+                updateTopBar();
+                soundEffects.turn();
+                setTimeout(showTurnScreen, 800);
+            } else {
+                // Clear everything
+                players.forEach(p => { if(p.element) p.element.remove(); });
+                players = [];
+                currentPlayerIndex = 0;
+                gameActive = false;
+                updateSetupPlayerList();
+                document.getElementById('setup-screen').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
